@@ -19,13 +19,20 @@
 // Створюємо об'єкт Book
 
 console.log("Завдання: 1 ==============================");
-
+const Book = {
+    title: 'Загальна Книга',
+    author: 'Анонім',
+    pages: 0,
+    read: function read() {
+        console.log(`Ви читаєте "${this.title}" від ${this.author}`);
+    },
+};
 // Виводимо в консоль Об'єкт: Book
-
+console.log(Book);
 // Виводимо в консоль прототип Об'єкту: Book
-
+console.log(Object.getPrototypeOf(Book));
 // Викликаємо функцію read об'єкту Book
-
+Book.read();
 // 2. Наслідування від базового об'єкту Book
 
 /*
@@ -38,15 +45,14 @@ console.log("Завдання: 1 ==============================");
  */
 
 // Створюємо об'єкт Novel, наслідуємо властивості і функції від об'єкта Book
-
+const Novel = Object.create(Book);
 // Додаємо властивість genre
-
+Novel['genre']= 'Новела';
 console.log("Завдання: 2 ==============================");
-
 // Виводимо в консоль Об'єкт: Novel
-
+console.log(Novel);
 // Виводимо в консоль прототип Об'єкту: Novel
-
+console.log(Object.getPrototypeOf(Novel));
 // 3. Створення нового об'єкту та зміна його прототипу
 
 /*
@@ -62,31 +68,48 @@ console.log("Завдання: 2 ==============================");
 
 // Створюємо об'єкт Biography
 
-// Змінемо прототип об'єкта Biography на Novel
 
 console.log("Завдання: 3 ==============================");
+const Biography = {
+    title: 'Загальна Біографія',
+    author: 'Біограф',
+    pages: 200,
+};
+// Змінемо прототип об'єкта Biography на Novel
+Object.setPrototypeOf(Novel, Biography);
 // Виводимо в консоль Об'єкт: Biography
-
+console.log(Biography);
 // Перевіримо чи являється Novel прототипом Biography та виведемо в консоль
-
+console.log(Biography.isPrototypeOf(Novel));
 // 4. Інкапсуляція властивості та додання властивості
 /*
  * Об'єкт: ScienceBook
  * Властивості та функції наслідуються від об'єкта Book
  * Також тут використовується інкапсуляція для створення властивості 'info', яка не може бути змінена напряму, а лише змінюється за допомогю гетера
  */
-
+const ScienceBook = Object.create(Book);
 // Створюємо ScienceBook, наслідуємо властивості і функції від об'єкта Book
-
+Object.defineProperty(ScienceBook, 'info', {
+    writable: true,
+    configurable: true,
+});
 // Додаємо властивість 'info' за допомогою Object.defineProperty
 // Зробимо щоб 'info' не можно було видалити або змінити, перевіримо і спробуємо присвоїти ій будь яке значення (це потрібно робити ззовні defineProperty),
 // Отримаємо помилку Cannot assign to read only property 'info' of object '#<Object>'
-
+Object.defineProperty(ScienceBook, 'setInfo', {
+    set: function(value) {
+        this.info = value;
+    }
+});
 // Далі створюємо сетер який присвоє властивості info значення яке отримує при виклику, помилку більше не отримуємо але при спробі вивести значення info отримуємо undefined
-
+Object.defineProperty(ScienceBook, 'getInfo', {
+    get: function() {
+        return `Про книгу ${this.title}: ${this.info}`;
+    }
+});
 // Створимо гетер який буде нам повертати рядок: Про книгу <title>: <info>
 // тепер все виводить коректно
-
+ScienceBook.setInfo = 'написана в 1915 році';
 // Заповнюємо об'єкт
 // | Властивість | Значення             |
 // |-------------|----------------------|
@@ -96,8 +119,10 @@ console.log("Завдання: 3 ==============================");
 
 console.log("Завдання: 4 ==============================");
 // Виводимо в консоль властивість info
-
+console.log("Властивість info об'єкта ScienceBook:", ScienceBook.info);
 // Виводимо в консоль налаштування властивости info
+const infoDescriptor = Object.getOwnPropertyDescriptor(ScienceBook, 'info');
+console.log("Налаштування властивості info об'єкта ScienceBook:", infoDescriptor);
 
 // 5. Поліморфізм: створення нового об'єкта та перевизначення його методу
 /*
